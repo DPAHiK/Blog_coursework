@@ -47,10 +47,11 @@ public class PostService {
 
     public void addPost(Post post) {
         postRepository.save(post);
-        this.posts = postRepository.findAll();
+        this.posts = postRepository.findAll(); // ну это хуита, надо лучше написать
     }
 
     public void deletePost(Post post) {
         postRepository.delete(post);
+        this.posts = postRepository.findAll();
     }
 }
