@@ -1,14 +1,12 @@
 package com.example.blog.controllers;
 
 import com.example.blog.models.Post;
+import com.example.blog.models.User;
 import com.example.blog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -43,6 +41,20 @@ public class MainController {
     @GetMapping("/registration")
     public String registration(Model model) {
         return "registration";
+    }
+
+    @PostMapping("/registration")
+    public String registration(@RequestParam String name,
+                               @RequestParam String password,
+                               @RequestParam String passwordConfirm,
+                               Model model) {
+        if(!password.equals(passwordConfirm)) {
+            return "registration";
+        }
+        User user= new User(name, password, "ROLE_USER");
+        service.addUser(user);
+
+        return "redirect:/";
     }
 
     @GetMapping("/blog")
