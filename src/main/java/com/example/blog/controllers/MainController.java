@@ -19,4 +19,14 @@ public class MainController {
         return "about";
     }
 
+    @GetMapping("/login")
+    public String login(Model model) {
+        return "login";
+    }
+
+    @GetMapping("/registration")
+    public String registration(Model model) {
+        return "registration";
+    }
+
 }
