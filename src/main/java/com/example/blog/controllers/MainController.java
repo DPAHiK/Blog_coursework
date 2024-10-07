@@ -110,7 +110,7 @@ public class MainController {
                                  Model model ){
         Post post = service.postByID(id).orElseThrow();
         service.deletePost(post);
-        
+
         return "redirect:/blog";
     }
 
