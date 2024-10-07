@@ -12,6 +12,12 @@
 
 <div class="container mt-5">
   <h1 th:text="Регистрация"></h1>
+  <form action="/registration" method="post">
+    <input type="text" name="name" placeholder="Имя пользователя" class="form-control"><br>
+    <input type="text" name="password" placeholder="Пароль" class="form-control"><br>
+    <input name="passwordConfirm" placeholder="Повторите пароль" class="form-control"><br>
+    <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+  </form>
 </div>
 
 
