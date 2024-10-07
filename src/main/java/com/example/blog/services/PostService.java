@@ -47,7 +47,7 @@ public class PostService {
 
     public void addPost(Post post) {
         postRepository.save(post);
-        //add to posts too
+        this.posts = postRepository.findAll();
     }
 
     public void deletePost(Post post) {
