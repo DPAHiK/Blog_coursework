@@ -49,6 +49,7 @@ public class MainController {
                                @RequestParam String passwordConfirm,
                                Model model) {
         if(!password.equals(passwordConfirm)) {
+            model.addAttribute("errors", "Пароли не совпадают");
             return "registration";
         }
         User user= new User(name, password, "ROLE_USER");
