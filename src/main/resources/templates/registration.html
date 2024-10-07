@@ -12,8 +12,8 @@
 
 <div class="container mt-5">
   <h1 th:text="Регистрация"></h1>
-  <div th:if="|${errors != ''}|">
-    <div th:text="|${errors}|"/>
+  <div th:if="|${errors}|" >
+    <div th:text="|${errors}|" class="alert alert-danger" role="alert" />
   </div>
   <form action="/registration" method="post">
     <input type="text" name="name" placeholder="Имя пользователя" class="form-control"><br>
