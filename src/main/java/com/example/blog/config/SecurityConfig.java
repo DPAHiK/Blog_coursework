@@ -33,9 +33,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/","/blog", "/login", "/registration", "/about").permitAll()
                         .requestMatchers("/blog/add").authenticated())
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .permitAll())
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .logout((logout) -> logout.permitAll())
                 .build();
     }
