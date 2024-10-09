@@ -24,21 +24,22 @@ public class MainController {
         this.service = postService;
     }
 
+    private boolean isAuthenticated() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals("anonymousUser")) return false;
+        return true;
+    }
+
     @GetMapping("/")
     public String home(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth.getName().equals("anonymousUser")) {
-            model.addAttribute("auth", false);
-        }
-        else {
-            model.addAttribute("auth", true);
-        }
+        model.addAttribute("auth", isAuthenticated());
         model.addAttribute("title", "Главная страница");
         return "home";
     }
 
     @GetMapping("/about")
     public String about(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         model.addAttribute("title", "О нас");
         return "about";
     }
@@ -75,6 +76,7 @@ public class MainController {
 
     @GetMapping("/blog")
     public String blogMain(Model model){
+        model.addAttribute("auth", isAuthenticated());
         Iterable<Post> posts = service.allPosts();
         model.addAttribute("posts", posts);
         return "blog-main";
@@ -82,6 +84,7 @@ public class MainController {
 
     @GetMapping("/blog/add")
     public String blogAdd(Model model){
+        model.addAttribute("auth", isAuthenticated());
         return "blog-add";
     }
 
@@ -97,7 +100,7 @@ public class MainController {
 
     @GetMapping("/blog/{id}")
     public String blogDetails(Model model, @PathVariable(value = "id") long id){
-
+        model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
         if (service.postByID(id).isEmpty()) return "redirect:/blog";
 
@@ -109,6 +112,7 @@ public class MainController {
 
     @GetMapping("/blog/{id}/edit")
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
+        model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
         if (service.postByID(id).isEmpty()) return "redirect:/blog";
 
