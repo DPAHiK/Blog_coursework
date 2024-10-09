@@ -40,6 +40,10 @@ public class PostService {
         return post;
     }
 
+    public Optional<User> userByName(String name) {
+        return userRepository.findByName(name);
+    }
+
     public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);

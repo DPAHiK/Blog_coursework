@@ -2,8 +2,11 @@ package com.example.blog.controllers;
 
 import com.example.blog.models.Post;
 import com.example.blog.models.User;
+import com.example.blog.services.MyUserDetailsService;
 import com.example.blog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,13 @@ public class MainController {
 
     @GetMapping("/")
     public String home(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals("anonymousUser")) {
+            model.addAttribute("auth", false);
+        }
+        else {
+            model.addAttribute("auth", true);
+        }
         model.addAttribute("title", "Главная страница");
         return "home";
     }
@@ -48,6 +58,11 @@ public class MainController {
                                @RequestParam String password,
                                @RequestParam String passwordConfirm,
                                Model model) {
+        if(service.userByName(name).isPresent()) {
+            model.addAttribute("errors", "Пользователь с таким именем уже существует");
+            return "registration";
+        }
+
         if(!password.equals(passwordConfirm)) {
             model.addAttribute("errors", "Пароли не совпадают");
             return "registration";
