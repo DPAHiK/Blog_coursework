@@ -46,11 +46,13 @@ public class MainController {
 
     @GetMapping("/login")
     public String login(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         return "login";
     }
 
     @GetMapping("/registration")
     public String registration(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         return "registration";
     }
 
