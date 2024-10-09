@@ -51,7 +51,7 @@ public class PostService {
 
     public void addPost(Post post) {
         postRepository.save(post);
-        this.posts = postRepository.findAll(); // ну это хуита, надо лучше написать
+        this.posts = postRepository.findAll(); // мб получше что-то?
     }
 
     public void deletePost(Post post) {
