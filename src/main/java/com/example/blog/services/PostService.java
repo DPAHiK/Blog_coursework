@@ -40,6 +40,10 @@ public class PostService {
         return post;
     }
 
+    public Optional<User> userByName(String name) {
+        return userRepository.findByName(name);
+    }
+
     public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -47,10 +51,11 @@ public class PostService {
 
     public void addPost(Post post) {
         postRepository.save(post);
-        //add to posts too
+        this.posts = postRepository.findAll(); // мб получше что-то?
     }
 
     public void deletePost(Post post) {
         postRepository.delete(post);
+        this.posts = postRepository.findAll();
     }
 }

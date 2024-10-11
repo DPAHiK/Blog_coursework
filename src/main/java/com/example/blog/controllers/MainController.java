@@ -2,8 +2,11 @@ package com.example.blog.controllers;
 
 import com.example.blog.models.Post;
 import com.example.blog.models.User;
+import com.example.blog.services.MyUserDetailsService;
 import com.example.blog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,25 +24,35 @@ public class MainController {
         this.service = postService;
     }
 
+    private boolean isAuthenticated() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals("anonymousUser")) return false;
+        return true;
+    }
+
     @GetMapping("/")
     public String home(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         model.addAttribute("title", "Главная страница");
         return "home";
     }
 
     @GetMapping("/about")
     public String about(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         model.addAttribute("title", "О нас");
         return "about";
     }
 
     @GetMapping("/login")
     public String login(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         return "login";
     }
 
     @GetMapping("/registration")
     public String registration(Model model) {
+        model.addAttribute("auth", isAuthenticated());
         return "registration";
     }
 
@@ -48,6 +61,11 @@ public class MainController {
                                @RequestParam String password,
                                @RequestParam String passwordConfirm,
                                Model model) {
+        if(service.userByName(name).isPresent()) {
+            model.addAttribute("errors", "Пользователь с таким именем уже существует");
+            return "registration";
+        }
+
         if(!password.equals(passwordConfirm)) {
             model.addAttribute("errors", "Пароли не совпадают");
             return "registration";
@@ -60,6 +78,7 @@ public class MainController {
 
     @GetMapping("/blog")
     public String blogMain(Model model){
+        model.addAttribute("auth", isAuthenticated());
         Iterable<Post> posts = service.allPosts();
         model.addAttribute("posts", posts);
         return "blog-main";
@@ -67,6 +86,7 @@ public class MainController {
 
     @GetMapping("/blog/add")
     public String blogAdd(Model model){
+        model.addAttribute("auth", isAuthenticated());
         return "blog-add";
     }
 
@@ -82,7 +102,7 @@ public class MainController {
 
     @GetMapping("/blog/{id}")
     public String blogDetails(Model model, @PathVariable(value = "id") long id){
-
+        model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
         if (service.postByID(id).isEmpty()) return "redirect:/blog";
 
@@ -94,6 +114,7 @@ public class MainController {
 
     @GetMapping("/blog/{id}/edit")
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
+        model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
         if (service.postByID(id).isEmpty()) return "redirect:/blog";
 
