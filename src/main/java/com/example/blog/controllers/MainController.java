@@ -73,7 +73,7 @@ public class MainController {
         User user= new User(name, password, "ROLE_USER");
         service.addUser(user);
 
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @GetMapping("/blog")

@@ -16,7 +16,7 @@
     <div th:if="${param.logout}" class="alert alert-success">You have been logged out.</div>
     <form th:action="|@{/login}|" method="post">
         <input type="text" name="username" placeholder="Имя пользователя" class="form-control"><br>
-        <input type="text" name="password" placeholder="Пароль" class="form-control"><br>
+        <input type="text" name="password" placeholder="Пароль" class="form-control" autocomplete="off"><br>
         <button type="submit" class="btn btn-success">Войти</button>
     </form>
 </div>
