@@ -1,9 +1,8 @@
 package com.example.blog.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Post {
@@ -14,6 +13,13 @@ public class Post {
     private String anons;
     private String full_text;
     private int views;
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User owner;
 
     public Post() {
     }
@@ -62,5 +68,13 @@ public class Post {
 
     public void setViews(int views) {
         this.views = views;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

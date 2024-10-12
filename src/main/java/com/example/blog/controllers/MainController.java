@@ -30,13 +30,6 @@ public class MainController {
         return true;
     }
 
-    @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("auth", isAuthenticated());
-        model.addAttribute("title", "Главная страница");
-        return "home";
-    }
-
     @GetMapping("/about")
     public String about(Model model) {
         model.addAttribute("auth", isAuthenticated());
@@ -76,7 +69,7 @@ public class MainController {
         return "redirect:/login";
     }
 
-    @GetMapping("/blog")
+    @GetMapping("/")
     public String blogMain(Model model){
         model.addAttribute("auth", isAuthenticated());
         Iterable<Post> posts = service.allPosts();
@@ -96,15 +89,22 @@ public class MainController {
                               @RequestParam String full_text,
                               Model model ){
         Post post = new Post(title, anons, full_text);
+        Optional<User> user = service.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user.isEmpty()) {
+            System.out.println("Error when trying to add post: user not found");
+            return "redirect:/";
+        }
+
+        post.setOwner(user.get());
         service.addPost(post);
-        return "redirect:/blog";
+        return "redirect:/";
     }
 
     @GetMapping("/blog/{id}")
     public String blogDetails(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
-        if (service.postByID(id).isEmpty()) return "redirect:/blog";
+        if (service.postByID(id).isEmpty()) return "redirect:/";
 
         ArrayList<Post> res = new ArrayList<Post>();
         post.ifPresent(res::add);
@@ -116,7 +116,7 @@ public class MainController {
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
-        if (service.postByID(id).isEmpty()) return "redirect:/blog";
+        if (service.postByID(id).isEmpty()) return "redirect:/";
 
         ArrayList <Post> res = new ArrayList<Post>();
         post.ifPresent(res::add);
@@ -136,7 +136,7 @@ public class MainController {
         post.setFull_text(full_text);
         service.addPost(post);
 
-        return "redirect:/blog";
+        return "redirect:/";
     }
 
     @PostMapping("/blog/{id}/remove")
@@ -145,7 +145,7 @@ public class MainController {
         Post post = service.postByID(id).orElseThrow();
         service.deletePost(post);
 
-        return "redirect:/blog";
+        return "redirect:/";
     }
 
 }
