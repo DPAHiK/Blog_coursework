@@ -104,11 +104,21 @@ public class MainController {
     public String blogDetails(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = service.postByID(id);
-        if (service.postByID(id).isEmpty()) return "redirect:/";
+        if (post.isEmpty()) return "redirect:/";
 
         ArrayList<Post> res = new ArrayList<Post>();
         post.ifPresent(res::add);
         model.addAttribute("post", res);
+
+        Optional <User> curUser = service.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(curUser.isPresent()) {
+            if( curUser.get().getId().equals(post.get().getOwner().getId()) ){
+                model.addAttribute("isOwn", true);
+            }
+            else{
+                model.addAttribute("isOwn", false);
+            }
+        }
         return "blog-details";
     }
 

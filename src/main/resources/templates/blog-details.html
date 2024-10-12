@@ -15,8 +15,8 @@
         <h3 th:text="|${el.title}|"></h3>
         <p th:text="|${el.full_text}|"></p>
         <p th:text="|${el.views} просмотров|"></p>
-        <a th:href="|/blog/${el.id}/edit|" class="btn btn-warning">Редактировать</a><br><br>
-        <form th:action="|/blog/${el.id}/remove|" method="post">
+        <a th:if="${isOwn == true}" th:href="|/blog/${el.id}/edit|" class="btn btn-warning">Редактировать</a><br><br>
+        <form th:if="${isOwn == true}" th:action="|/blog/${el.id}/remove|" method="post">
             <button type="submit" th:href="|/blog/${el.id}/remove|" class="btn btn-warning">Удалить</button>
         </form>
 
