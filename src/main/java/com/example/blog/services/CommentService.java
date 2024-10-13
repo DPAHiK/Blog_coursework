@@ -30,6 +30,10 @@ public class CommentService {
         return comment;
     }
 
+    public Iterable<Comment> commentsByPost(long id) {
+        return commentRepository.findByPostId(id);
+    }
+
 
     public void addComment(Comment post) {
         commentRepository.save(post);

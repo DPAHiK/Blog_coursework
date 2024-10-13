@@ -1,9 +1,10 @@
 package com.example.blog.controllers;
 
+import com.example.blog.models.Comment;
 import com.example.blog.models.Post;
 import com.example.blog.models.User;
-import com.example.blog.services.MyUserDetailsService;
 import com.example.blog.services.PostService;
+import com.example.blog.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +19,13 @@ import java.util.Optional;
 public class MainController {
 
     @Autowired
-    private PostService service;
+    private PostService postService;
+    @Autowired
+    private CommentService commentService;
 
-    public MainController(PostService postService) {
-        this.service = postService;
+    public MainController(PostService postService, CommentService commentService) {
+        this.postService = postService;
+        this.commentService = commentService;
     }
 
     private boolean isAuthenticated() {
@@ -54,7 +58,7 @@ public class MainController {
                                @RequestParam String password,
                                @RequestParam String passwordConfirm,
                                Model model) {
-        if(service.userByName(name).isPresent()) {
+        if(postService.userByName(name).isPresent()) {
             model.addAttribute("errors", "Пользователь с таким именем уже существует");
             return "registration";
         }
@@ -64,7 +68,7 @@ public class MainController {
             return "registration";
         }
         User user= new User(name, password, "ROLE_USER");
-        service.addUser(user);
+        postService.addUser(user);
 
         return "redirect:/login";
     }
@@ -72,7 +76,7 @@ public class MainController {
     @GetMapping("/")
     public String blogMain(Model model){
         model.addAttribute("auth", isAuthenticated());
-        Iterable<Post> posts = service.allPosts();
+        Iterable<Post> posts = postService.allPosts();
         model.addAttribute("posts", posts);
         return "blog-main";
     }
@@ -89,28 +93,28 @@ public class MainController {
                               @RequestParam String full_text,
                               Model model ){
         Post post = new Post(title, anons, full_text);
-        Optional<User> user = service.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user.isEmpty()) {
             System.out.println("Error when trying to add post: user not found");
             return "redirect:/";
         }
 
         post.setOwner(user.get());
-        service.addPost(post);
+        postService.addPost(post);
         return "redirect:/";
     }
 
     @GetMapping("/blog/{id}")
     public String blogDetails(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
-        Optional<Post> post = service.postByID(id);
+        Optional<Post> post = postService.postByID(id);
         if (post.isEmpty()) return "redirect:/";
 
         ArrayList<Post> res = new ArrayList<Post>();
         post.ifPresent(res::add);
         model.addAttribute("post", res);
 
-        Optional <User> curUser = service.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(curUser.isPresent()) {
             if( curUser.get().getId().equals(post.get().getOwner().getId()) ){
                 model.addAttribute("isOwn", true);
@@ -119,14 +123,17 @@ public class MainController {
                 model.addAttribute("isOwn", false);
             }
         }
+
+        Iterable<Comment> comments = commentService.commentsByPost(post.get().getId());
+        model.addAttribute("comments", comments);
         return "blog-details";
     }
 
     @GetMapping("/blog/{id}/edit")
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
-        Optional<Post> post = service.postByID(id);
-        if (service.postByID(id).isEmpty()) return "redirect:/";
+        Optional<Post> post = postService.postByID(id);
+        if (postService.postByID(id).isEmpty()) return "redirect:/";
 
         ArrayList <Post> res = new ArrayList<Post>();
         post.ifPresent(res::add);
@@ -140,11 +147,11 @@ public class MainController {
                                  @RequestParam String full_text,
                                  @PathVariable(value = "id") long id,
                                  Model model ){
-        Post post = service.postByID(id).orElseThrow();
+        Post post = postService.postByID(id).orElseThrow();
         post.setTitle(title);
         post.setAnons(anons);
         post.setFull_text(full_text);
-        service.addPost(post);
+        postService.addPost(post);
 
         return "redirect:/";
     }
@@ -152,8 +159,8 @@ public class MainController {
     @PostMapping("/blog/{id}/remove")
     public String blogPostRemove(@PathVariable(value = "id") long id,
                                  Model model ){
-        Post post = service.postByID(id).orElseThrow();
-        service.deletePost(post);
+        Post post = postService.postByID(id).orElseThrow();
+        postService.deletePost(post);
 
         return "redirect:/";
     }
