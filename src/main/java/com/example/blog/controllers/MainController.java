@@ -146,6 +146,7 @@ public class MainController {
 
         Comment comment = new Comment(full_text);
         comment.setAuthor(user.get().getName());
+        comment.setPost(post.get());
         commentService.addComment(comment);
         return "redirect:/blog/" + postId;
     }
