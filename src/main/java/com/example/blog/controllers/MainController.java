@@ -26,8 +26,8 @@ public class MainController {
 
     private boolean isAuthenticated() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth.getName().equals("anonymousUser")) return false;
-        return true;
+        if(!auth.getName().equals("anonymousUser")) return true;
+        return false;
     }
 
     @GetMapping("/about")
