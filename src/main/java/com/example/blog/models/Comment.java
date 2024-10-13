@@ -10,6 +10,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String full_text;
+    private String author; // потом надо ManyToOne с user сделать
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -46,5 +47,13 @@ public class Comment {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

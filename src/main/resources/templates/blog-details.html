@@ -26,7 +26,7 @@
         <button type="submit" th:href="|/blog/${post.id}/addComment|" class="btn btn-warning">Прокомментировать</button>
     </form>
     <div th:each="comm : ${comments}" class = "mt-2">
-        <h3 th:text="|${post.owner.name}|"></h3>
+        <h3 th:text="|${comm.author}|"></h3>
         <p th:text="|${comm.full_text}|"></p>
     </div>
 </div>>

@@ -137,8 +137,15 @@ public class MainController {
             return "redirect:/";
         }
 
+        Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user.isEmpty()){
+            System.out.println("Error when trying to add comment: user not found");
+            return "redirect:/";
+        }
+
+
         Comment comment = new Comment(full_text);
-        comment.setPost(post.get());
+        comment.setAuthor(user.get().getName());
         commentService.addComment(comment);
         return "redirect:/blog/" + postId;
     }
