@@ -127,6 +127,22 @@ public class MainController {
         return "blog-details";
     }
 
+    @PostMapping("/blog/{id}/addComment")
+    public String addComment(Model model,
+                             @PathVariable(value = "id") long postId,
+                             @RequestParam String full_text){
+        Optional<Post> post = postService.postByID(postId);
+        if(post.isEmpty()) {
+            System.out.println("Error when trying to add comment: post not found");
+            return "redirect:/";
+        }
+
+        Comment comment = new Comment(full_text);
+        comment.setPost(post.get());
+        commentService.addComment(comment);
+        return "redirect:/blog/" + postId;
+    }
+
     @GetMapping("/blog/{id}/edit")
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
