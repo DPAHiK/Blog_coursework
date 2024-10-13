@@ -8,8 +8,6 @@ import com.example.blog.models.Post;
 import com.example.blog.models.User;
 import com.example.blog.repo.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
