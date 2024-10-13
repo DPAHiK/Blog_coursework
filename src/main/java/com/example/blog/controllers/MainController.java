@@ -110,9 +110,7 @@ public class MainController {
         Optional<Post> post = postService.postByID(id);
         if (post.isEmpty()) return "redirect:/";
 
-        ArrayList<Post> res = new ArrayList<Post>();
-        post.ifPresent(res::add);
-        model.addAttribute("post", res);
+        model.addAttribute("post", post.get());
 
         Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(curUser.isPresent()) {

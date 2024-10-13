@@ -11,15 +11,23 @@
 
 
 <div class="container mt-5">
-    <div th:each="el : ${post}" class="alert alert-info mt-2">
-        <h3 th:text="|${el.title}|"></h3>
-        <p th:text="|${el.full_text}|"></p>
-        <p th:text="|${el.views} просмотров|"></p>
-        <a th:if="${isOwn == true}" th:href="|/blog/${el.id}/edit|" class="btn btn-warning">Редактировать</a><br><br>
-        <form th:if="${isOwn == true}" th:action="|/blog/${el.id}/remove|" method="post">
-            <button type="submit" th:href="|/blog/${el.id}/remove|" class="btn btn-warning">Удалить</button>
+    <div class="alert alert-info mt-2">
+        <h3 th:text="|${post.title}|"></h3>
+        <p th:text="|${post.full_text}|"></p>
+        <p th:text="|${post.views} просмотров|"></p>
+        <a th:if="${isOwn == true}" th:href="|/blog/${post.id}/edit|" class="btn btn-warning">Редактировать</a><br><br>
+        <form th:if="${isOwn == true}" th:action="|/blog/${post.id}/remove|" method="post">
+            <button type="submit" th:href="|/blog/${post.id}/remove|" class="btn btn-warning">Удалить</button>
         </form>
 
+    </div>
+    <form th:if="${auth == true}"  th:action="|/blog/${post.id}/addComment|" method="post">
+        <textarea name="full_text" placeholder="Введите комментарий" class="form-control"></textarea><br>
+        <button type="submit" th:href="|/blog/${post.id}/addComment|" class="btn btn-warning">Прокомментировать</button>
+    </form>
+    <div th:each="comm : ${comments}" class = "mt-2">
+        <h3 th:text="|${post.owner.name}|"></h3>
+        <p th:text="|${comm.full_text}|"></p>
     </div>
 </div>>
 
