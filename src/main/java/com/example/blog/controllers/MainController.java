@@ -37,7 +37,6 @@ public class MainController {
     @GetMapping("/about")
     public String about(Model model) {
         model.addAttribute("auth", isAuthenticated());
-        model.addAttribute("title", "О нас");
         return "about";
     }
 
@@ -58,6 +57,11 @@ public class MainController {
                                @RequestParam String password,
                                @RequestParam String passwordConfirm,
                                Model model) {
+        if(name.isEmpty() || password.isEmpty() || name.equals("anonymousUser")) {
+            model.addAttribute("errors", "Некорректные данные для регистрации. Пожалуйста, используйте другие");
+            return "registration";
+        }
+
         if(postService.userByName(name).isPresent()) {
             model.addAttribute("errors", "Пользователь с таким именем уже существует");
             return "registration";

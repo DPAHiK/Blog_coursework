@@ -12,8 +12,8 @@
 
 <div class="container mt-5">
     <h1 th:text="Логин"></h1>
-    <div th:if="${param.error}" class="alert alert-danger">Invalid username or password.</div>
-    <div th:if="${param.logout}" class="alert alert-success">You have been logged out.</div>
+    <div th:if="${param.error}" class="alert alert-danger">Неправильное имя или пароль</div>
+    <div th:if="${param.logout}" class="alert alert-success">Вы вышли</div>
     <form th:action="|@{/login}|" method="post">
         <input type="text" name="username" placeholder="Имя пользователя" class="form-control"><br>
         <input type="text" name="password" placeholder="Пароль" class="form-control" autocomplete="off"><br>
