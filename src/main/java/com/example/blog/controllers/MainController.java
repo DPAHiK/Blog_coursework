@@ -145,13 +145,13 @@ public class MainController {
         Optional<Post> post = postService.postByID(postId);
         if(post.isEmpty()) {
             System.out.println("Error when trying to add comment: post not found");
-            return "redirect:/";
+            return "redirect:/blog/" + postId;
         }
 
         Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user.isEmpty()){
             System.out.println("Error when trying to add comment: user not found");
-            return "redirect:/";
+            return "redirect:/blog/" + postId;
         }
 
 
