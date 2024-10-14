@@ -42,6 +42,10 @@ public class PostService {
         return userRepository.findByName(name);
     }
 
+    public Optional<User> userById(Long id) {
+        return userRepository.findById(id);
+    }
+
     public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);

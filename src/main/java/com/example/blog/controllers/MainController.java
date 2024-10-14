@@ -30,8 +30,7 @@ public class MainController {
 
     private boolean isAuthenticated() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(!auth.getName().equals("anonymousUser")) return true;
-        return false;
+        return !auth.getName().equals("anonymousUser");
     }
 
     @GetMapping("/about")
@@ -133,6 +132,14 @@ public class MainController {
             }
         }
 
+        Optional <User> owner = postService.userById(post.get().getOwner().getId());
+        if(owner.isPresent()) {
+            model.addAttribute("owner", owner.get());
+        }
+        else {
+            model.addAttribute("owner", null);
+        }
+
         Iterable<Comment> comments = commentService.commentsByPost(post.get().getId());
         model.addAttribute("comments", comments);
         return "blog-details";
@@ -166,11 +173,9 @@ public class MainController {
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
         Optional<Post> post = postService.postByID(id);
-        if (postService.postByID(id).isEmpty()) return "redirect:/";
+        if (post.isEmpty()) return "redirect:/";
 
-        ArrayList <Post> res = new ArrayList<Post>();
-        post.ifPresent(res::add);
-        model.addAttribute("post", res);
+        model.addAttribute("post", post.get());
         return "blog-edit";
     }
 
