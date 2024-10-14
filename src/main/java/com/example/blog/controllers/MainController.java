@@ -57,6 +57,7 @@ public class MainController {
                                @RequestParam String password,
                                @RequestParam String passwordConfirm,
                                Model model) {
+        model.addAttribute("auth", isAuthenticated());
         if(name.isEmpty() || password.isEmpty() || name.equals("anonymousUser")) {
             model.addAttribute("errors", "Некорректные данные для регистрации. Пожалуйста, используйте другие");
             return "registration";
@@ -96,11 +97,17 @@ public class MainController {
                               @RequestParam String anons,
                               @RequestParam String full_text,
                               Model model ){
+        model.addAttribute("auth", isAuthenticated());
+        if(title.isEmpty() || anons.isEmpty() || full_text.isEmpty()) {
+            model.addAttribute("errors", "Все поля должны быть заполнены");
+            return "blog-add";
+        }
         Post post = new Post(title, anons, full_text);
         Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user.isEmpty()) {
+            model.addAttribute("errors", "Ошибка при создании поста: пользователь не найден");
             System.out.println("Error when trying to add post: user not found");
-            return "redirect:/";
+            return "blog-add";
         }
 
         post.setOwner(user.get());

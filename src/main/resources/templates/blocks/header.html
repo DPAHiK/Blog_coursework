@@ -1,4 +1,4 @@
-<div th:fragment="header">
+<div th:fragment="header" xmlns="http://www.w3.org/1999/html">
 
   <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center link-body-emphasis text-decoration-none">
@@ -14,6 +14,9 @@
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/about">Про нас</a>
       <a th:if="${auth == true}" class="me-3 py-2 link-body-emphasis text-decoration-none" href="/logout">Выйти</a>
     </nav>
+  </div>
+  <div th:if="|${errors}|" class="container">
+    <div th:text="|${errors}|" class="alert alert-danger" role="alert" />
   </div>
 
 </div>

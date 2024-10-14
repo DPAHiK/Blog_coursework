@@ -10,11 +10,8 @@
 <header th:insert="~{blocks/header.html::header}"></header>
 
 
-<div class="container mt-5">
+<div class="container">
   <h1 th:text="Регистрация"></h1>
-  <div th:if="|${errors}|" >
-    <div th:text="|${errors}|" class="alert alert-danger" role="alert" />
-  </div>
   <form action="/registration" method="post">
     <input type="text" name="name" placeholder="Имя пользователя" class="form-control" autocomplete="off"><br>
     <input type="text" name="password" placeholder="Пароль" class="form-control" autocomplete="off"><br>

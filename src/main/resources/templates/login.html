@@ -10,7 +10,7 @@
 <header th:insert="~{blocks/header.html::header}"></header>
 
 
-<div class="container mt-5">
+<div class="container">
     <h1 th:text="Логин"></h1>
     <div th:if="${param.error}" class="alert alert-danger">Неправильное имя или пароль</div>
     <div th:if="${param.logout}" class="alert alert-success">Вы вышли</div>
