@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <title >Блог сайта</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -33,12 +33,16 @@
 
     <div th:each="comm : ${comments}" class = "alert alert-warning mt-2">
         <h3 th:text="|${comm.author}|"></h3>
-        <p th:text="|${comm.full_text}|"></p>
+        <p th:text="|${comm.full_text}|" id="fullTextLabel"></p>
 
-        <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/editComment/${comm.id}|" method="post" style="display: inline-block">
-            <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning">Редактировать</button>
+
+        <button th:if="${curUser.name == comm.author}" id="commentEdit" type="submit" class="btn btn-warning">Редактировать</button>
+
+        <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/editComment/${comm.id}|"  method="post" hidden="hidden" id="confirmForm" >
+            <textarea th:text="|${comm.full_text}|" class="form-control" name="full_text" id="fullTextArea" hidden="hidden"></textarea>
+            <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning"  id="confirmButton">Готово</button>
         </form>
-        <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/removeComment/${comm.id}|" method="post" style="display: inline-block">
+        <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/removeComment/${comm.id}|" method="post" class="mt-2">
             <button type="submit" th:href="|/blog/${post.id}/removeComment/${comm.id}|" class="btn btn-warning">Удалить</button>
         </form>
 
@@ -49,4 +53,30 @@
 <footer th:insert="~{blocks/footer.html::footer}"></footer>
 
 </body>
+<script>
+    let editCommentBut = document.getElementById("commentEdit")
+    let confirmEditBut = document.getElementById("confirmButton")
+
+    editCommentBut.onclick = function () {
+        let label = document.getElementById("fullTextLabel")
+        let textArea = document.getElementById("fullTextArea")
+        let form = document.getElementById("confirmForm")
+
+        label.hidden = true
+        editCommentBut.hidden = true
+        textArea.hidden = false
+        form.hidden = false
+    }
+
+    confirmEditBut.onclick = function (){
+        let label = document.getElementById("fullTextLabel")
+        let textArea = document.getElementById("fullTextArea")
+        let form = document.getElementById("confirmForm")
+
+        label.hidden = false
+        editCommentBut.hidden = false
+        textArea.hidden = true
+        form.hidden = true
+    }
+</script>
 </html>
