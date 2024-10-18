@@ -124,12 +124,10 @@ public class MainController {
 
         Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(curUser.isPresent()) {
-            if( curUser.get().getId().equals(post.get().getOwner().getId()) ){
-                model.addAttribute("isOwn", true);
-            }
-            else{
-                model.addAttribute("isOwn", false);
-            }
+            model.addAttribute("curUser", curUser.get());
+        }
+        else{
+            model.addAttribute("curUser", null);
         }
 
         Optional <User> owner = postService.userById(post.get().getOwner().getId());
@@ -145,29 +143,7 @@ public class MainController {
         return "blog-details";
     }
 
-    @PostMapping("/blog/{id}/addComment")
-    public String addComment(Model model,
-                             @PathVariable(value = "id") long postId,
-                             @RequestParam String full_text){
-        Optional<Post> post = postService.postByID(postId);
-        if(post.isEmpty()) {
-            System.out.println("Error when trying to add comment: post not found");
-            return "redirect:/blog/" + postId;
-        }
 
-        Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(user.isEmpty()){
-            System.out.println("Error when trying to add comment: user not found");
-            return "redirect:/blog/" + postId;
-        }
-
-
-        Comment comment = new Comment(full_text);
-        comment.setAuthor(user.get().getName());
-        comment.setPost(post.get());
-        commentService.addComment(comment);
-        return "redirect:/blog/" + postId;
-    }
 
     @GetMapping("/blog/{id}/edit")
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
@@ -201,6 +177,59 @@ public class MainController {
         postService.deletePost(post);
 
         return "redirect:/";
+    }
+
+    @PostMapping("/blog/{id}/addComment")
+    public String addComment(Model model,
+                             @PathVariable(value = "id") long postId,
+                             @RequestParam String full_text){
+        Optional<Post> post = postService.postByID(postId);
+        if(post.isEmpty()) {
+            System.out.println("Error when trying to add comment: post not found");
+            return "redirect:/blog/" + postId;
+        }
+
+        Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user.isEmpty()){
+            System.out.println("Error when trying to add comment: user not found");
+            return "redirect:/blog/" + postId;
+        }
+
+
+        Comment comment = new Comment(full_text);
+        comment.setAuthor(user.get().getName());
+        comment.setPost(post.get());
+        commentService.addComment(comment);
+        return "redirect:/blog/" + postId;
+    }
+
+    @PostMapping("/blog/{id}/editComment/{id_comment}")
+    public String editComment(Model model,
+                             @PathVariable(value = "id") long postId,
+                              @PathVariable(value = "id_comment") long commentId,
+                             @RequestParam String full_text){
+        Optional<Comment> comment = commentService.commentByID(commentId);
+        if(comment.isEmpty()) {
+            System.out.println("Error when trying to edit comment: comment not found");
+            return "redirect:/blog/" + postId;
+        }
+        comment.get().setFull_text(full_text);
+        commentService.addComment(comment.get());
+
+        return "redirect:/blog/" + postId;
+    }
+
+    @PostMapping("/blog/{id}/removeComment/{id_comment}")
+    public String removeComment(Model model,
+                              @PathVariable(value = "id") long postId,
+                              @PathVariable(value = "id_comment") long commentId){
+        Optional<Comment> comment = commentService.commentByID(commentId);
+        if(comment.isEmpty()) {
+            System.out.println("Error when trying to edit comment: comment not found");
+            return "redirect:/blog/" + postId;
+        }
+        commentService.deleteComment(comment.get());
+        return "redirect:/blog/" + postId;
     }
 
 }
