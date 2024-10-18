@@ -36,9 +36,10 @@
         <p th:text="|${comm.full_text}|" id="fullTextLabel"></p>
 
 
-        <button th:if="${curUser.name == comm.author}" id="commentEdit" type="submit" class="btn btn-warning">Редактировать</button>
+        <button  type="button" class="btn btn-warning">Редактировать</button>
 
         <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/editComment/${comm.id}|"  method="post" hidden="hidden" id="confirmForm" >
+
             <textarea th:text="|${comm.full_text}|" class="form-control" name="full_text" id="fullTextArea" hidden="hidden"></textarea>
             <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning"  id="confirmButton">Готово</button>
         </form>
