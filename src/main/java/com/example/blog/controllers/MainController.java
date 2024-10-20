@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 public class MainController {
 
@@ -31,18 +33,33 @@ public class MainController {
     @GetMapping("/about")
     public String about(Model model) {
         model.addAttribute("auth", isAuthenticated());
+
+        Optional<User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
+                () -> model.addAttribute("curUser", null));
+
         return "about";
     }
 
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("auth", isAuthenticated());
+
+        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
+                () -> model.addAttribute("curUser", null));
+
         return "login";
     }
 
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("auth", isAuthenticated());
+
+        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
+                () -> model.addAttribute("curUser", null));
+
         return "registration";
     }
 
@@ -52,6 +69,11 @@ public class MainController {
                                @RequestParam String passwordConfirm,
                                Model model) {
         model.addAttribute("auth", isAuthenticated());
+
+        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
+                () -> model.addAttribute("curUser", null));
+
         if(name.isEmpty() || password.isEmpty() || name.equals("anonymousUser")) {
             model.addAttribute("errors", "Некорректные данные для регистрации. Пожалуйста, используйте другие");
             return "registration";

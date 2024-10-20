@@ -13,7 +13,7 @@
 <div class="container">
     <div class="alert alert-info mt-2">
         <h3 th:text="|${post.title}|"></h3>
-        <p th:if="${owner != null}" th:text="|Автор ${owner.name}|"></p>
+        <p th:if="${owner != null}" th:text="|Автор: ${owner.name}|"></p>
         <p th:unless="${owner != null}">???</p>
         <p th:text="|${post.full_text}|"></p>
         <p th:text="|${post.views} просмотров|"></p>

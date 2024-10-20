@@ -9,6 +9,7 @@
     <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
       <a th:if="${auth == false}" class="me-3 py-2 link-body-emphasis text-decoration-none" href="/login">Войти</a>
       <a th:if="${auth == false}" class="me-3 py-2 link-body-emphasis text-decoration-none" href="/registration">Регистрация</a>
+      <a th:if="${auth == true}" class="me-3 py-2 link-body-emphasis text-decoration-none" th:href="|/profile/${curUser.id}|">Мой профиль</a>
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/">Главная</a>
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/blog/add">Добавить блог</a>
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/about">Про нас</a>
