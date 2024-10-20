@@ -40,8 +40,9 @@
 
         <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/editComment/${comm.id}|"  method="post" hidden="hidden" th:id="|confirmForm${comm.id}|" >
 
-            <textarea th:text="|${comm.full_text}|" class="form-control" name="full_text" th:id="|fullTextArea${comm.id}|" ></textarea>
-            <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning" th:id="|confirmButton${comm.id}|" th:onclick="|editCommentConfirm(${comm.id})|" >Готово</button>
+            <textarea th:text="|${comm.full_text}|" class="form-control mb-2" name="full_text" th:id="|fullTextArea${comm.id}|" ></textarea>
+            <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning"  th:onclick="|editCommentConfirm(${comm.id})|" style="display: inline-block" >Готово</button>
+            <button type="button" class="btn btn-warning" th:onclick="|editCommentConfirm(${comm.id})|" style="display: inline-block" >Отмена</button>
         </form>
         <form th:if="${curUser.name == comm.author}" th:action="|/blog/${post.id}/removeComment/${comm.id}|" method="post" class="mt-2">
             <button type="submit" th:href="|/blog/${post.id}/removeComment/${comm.id}|" class="btn btn-warning">Удалить</button>
@@ -55,7 +56,7 @@
 
 </body>
 <script>
-    // хуйня, переделать
+    
 
     function editComment(commentId) {
         let editBut = document.getElementById("editBut" + commentId)
