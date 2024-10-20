@@ -11,7 +11,7 @@ import com.example.blog.repo.UserRepository;
 import java.util.Optional;
 
 @Service
-public class PostService {
+public class PostService { //Он вообще нужен?
     private Iterable<Post> posts;
     private UserRepository userRepository;
     private PostRepository postRepository;

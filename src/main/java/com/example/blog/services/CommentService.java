@@ -7,7 +7,7 @@ import com.example.blog.models.Comment;
 import java.util.Optional;
 
 @Service
-public class CommentService {
+public class CommentService {       //Он вообще нужен?
     private Iterable<Comment> comments;
     private CommentRepository commentRepository;
 
