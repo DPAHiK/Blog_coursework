@@ -85,7 +85,18 @@ public class MainController {
     }
 
 
-
+    @GetMapping("/profile/{id}")
+    public String profile(Model model, @PathVariable(value = "id") long id){
+        Optional<User> user = postService.userById(id);
+        if(user.isPresent()){
+            model.addAttribute("user", user.get());
+        }
+        else {
+            System.out.println("Error with opening profile: user not found");
+            return "redirect:/";
+        }
+        return "profile";
+    }
 
 
 }
