@@ -12,7 +12,9 @@
 
 <div class="container">
   <h1 th:text="|${user.name}|"></h1>
-
+  <div th:text="|Дата регистрации: ${userInfo.regDate}|" />
+  <div th:text="|Посты: ${userInfo.postCount}|" />
+  <div th:text="|Комментарии: ${userInfo.commentCount}|" />
 </div>>
 
 <footer th:insert="~{blocks/footer.html::footer}"></footer>

@@ -21,8 +21,7 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    public UserInfo(Long id, String regDate, Long postCount, Long commentCount) {
-        this.id = id;
+    public UserInfo( String regDate, Long postCount, Long commentCount) {
         this.regDate = regDate;
         this.postCount = postCount;
         this.commentCount = commentCount;
@@ -58,5 +57,13 @@ public class UserInfo {
 
     public void setCommentCount(Long commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

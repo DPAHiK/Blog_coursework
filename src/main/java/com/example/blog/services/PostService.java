@@ -1,7 +1,9 @@
 package com.example.blog.services;
 
 
+import com.example.blog.models.UserInfo;
 import com.example.blog.repo.PostRepository;
+import com.example.blog.repo.UserInfoRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.blog.models.Post;
@@ -14,11 +16,13 @@ import java.util.Optional;
 public class PostService { //Он вообще нужен?
     private Iterable<Post> posts;
     private UserRepository userRepository;
+    private UserInfoRepository userInfoRepository;
     private PostRepository postRepository;
     private PasswordEncoder passwordEncoder;
 
-    public PostService(UserRepository userRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
+    public PostService(UserRepository userRepository, UserInfoRepository userInfoRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userInfoRepository = userInfoRepository;
         this.postRepository = postRepository;
         this.passwordEncoder = passwordEncoder;
         posts = postRepository.findAll();
@@ -46,9 +50,15 @@ public class PostService { //Он вообще нужен?
         return userRepository.findById(id);
     }
 
+    public Optional<UserInfo> infoByUserID(Long id){return userInfoRepository.findByUserId(id);}
+
     public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    public void addUserInfo(UserInfo userInfo){
+        userInfoRepository.save(userInfo);
     }
 
     public void addPost(Post post) {
