@@ -30,16 +30,6 @@ public class MainController {
         return !auth.getName().equals("anonymousUser");
     }
 
-    @GetMapping("/about")
-    public String about(Model model) {
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional<User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
-
-        return "about";
-    }
 
     @GetMapping("/login")
     public String login(Model model) {
