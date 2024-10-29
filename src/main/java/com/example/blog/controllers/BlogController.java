@@ -3,6 +3,7 @@ package com.example.blog.controllers;
 import com.example.blog.models.Comment;
 import com.example.blog.models.Post;
 import com.example.blog.models.User;
+import com.example.blog.models.UserInfo;
 import com.example.blog.services.PostService;
 import com.example.blog.services.CommentService;
 import com.example.blog.services.UserInfoService;
@@ -84,6 +85,11 @@ public class BlogController {
 
         post.setOwner(user.get());
         postService.addPost(post);
+
+        Optional<UserInfo> userInfo = userService.infoByUserID(user.get().getId());
+        userInfo.ifPresent(info -> {info.setPostCount(info.getPostCount() + 1);
+                                    userService.addUserInfo(info);});
+
         return "redirect:/";
     }
 
@@ -97,7 +103,7 @@ public class BlogController {
 
         Optional <User> owner = userService.userById(post.get().getOwner().getId());
         owner.ifPresentOrElse((user) -> model.addAttribute("owner", user),
-                () -> model.addAttribute("owner", null));
+                () -> model.addAttribute("owner", new User("anon","","ROLE_ANONYMOUS")));
 
         Iterable<Comment> comments = commentService.commentsByPost(post.get().getId());
         model.addAttribute("comments", comments);
@@ -136,7 +142,12 @@ public class BlogController {
     public String blogPostRemove(@PathVariable(value = "id") long id,
                                  Model model ){
         Post post = postService.postByID(id).orElseThrow();
+        User owner = userService.userById(post.getOwner().getId()).orElseThrow();
         postService.deletePost(post);
+
+        Optional<UserInfo> userInfo = userService.infoByUserID(owner.getId());
+        userInfo.ifPresent(info -> {info.setPostCount(info.getPostCount() - 1);
+            userService.addUserInfo(info);});
 
         return "redirect:/";
     }
@@ -167,6 +178,11 @@ public class BlogController {
         comment.setAuthor(user.get());
         comment.setPost(post.get());
         commentService.addComment(comment);
+
+        Optional<UserInfo> userInfo = userService.infoByUserID(user.get().getId());
+        userInfo.ifPresent(info -> {info.setCommentCount(info.getCommentCount() + 1);
+            userService.addUserInfo(info);});
+
         return "redirect:/blog/" + postId;
     }
 
