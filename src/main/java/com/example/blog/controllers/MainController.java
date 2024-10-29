@@ -4,6 +4,7 @@ import com.example.blog.models.User;
 import com.example.blog.models.UserInfo;
 import com.example.blog.services.PostService;
 import com.example.blog.services.CommentService;
+import com.example.blog.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
@@ -19,13 +20,10 @@ import java.util.Optional;
 public class MainController {
 
     @Autowired
-    private PostService postService;
-    @Autowired
-    private CommentService commentService;
+    private final UserInfoService userService;
 
-    public MainController(PostService postService, CommentService commentService) {
-        this.postService = postService;
-        this.commentService = commentService;
+    public MainController(UserInfoService userService) {
+        this.userService = userService;
     }
 
     private boolean isAuthenticated() {
@@ -38,7 +36,7 @@ public class MainController {
     public String login(Model model) {
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -49,7 +47,7 @@ public class MainController {
     public String registration(Model model) {
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -63,7 +61,7 @@ public class MainController {
                                Model model) {
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -72,7 +70,7 @@ public class MainController {
             return "registration";
         }
 
-        if(postService.userByName(name).isPresent()) {
+        if(userService.userByName(name).isPresent()) {
             model.addAttribute("errors", "Пользователь с таким именем уже существует");
             return "registration";
         }
@@ -84,8 +82,8 @@ public class MainController {
         User user= new User(name, password, "ROLE_USER");
         UserInfo userInfo = new UserInfo(LocalDate.now().toString(), 0L, 0L);
         userInfo.setUser(user);
-        postService.addUser(user);
-        postService.addUserInfo(userInfo);
+        userService.addUser(user);
+        userService.addUserInfo(userInfo);
 
         return "redirect:/login";
     }
@@ -95,11 +93,11 @@ public class MainController {
     public String profile(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
-        Optional<User> user = postService.userById(id);
+        Optional<User> user = userService.userById(id);
         if(user.isPresent()){
             model.addAttribute("user", user.get());
 
@@ -109,7 +107,7 @@ public class MainController {
             return "redirect:/";
         }
 
-        Optional<UserInfo> userInfo = postService.infoByUserID(user.get().getId());
+        Optional<UserInfo> userInfo = userService.infoByUserID(user.get().getId());
         if(userInfo.isPresent()){
             model.addAttribute("userInfo", userInfo.get());
 

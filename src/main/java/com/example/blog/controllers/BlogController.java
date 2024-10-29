@@ -5,6 +5,7 @@ import com.example.blog.models.Post;
 import com.example.blog.models.User;
 import com.example.blog.services.PostService;
 import com.example.blog.services.CommentService;
+import com.example.blog.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +21,16 @@ import java.util.Optional;
 public class BlogController {
 
     @Autowired
-    private PostService postService;
+    private final PostService postService;
     @Autowired
-    private CommentService commentService;
+    private final UserInfoService userService;
+    @Autowired
+    private final CommentService commentService;
 
 
-    public BlogController(PostService postService, CommentService commentService) {
+    public BlogController(PostService postService, UserInfoService userService, CommentService commentService) {
         this.postService = postService;
+        this.userService = userService;
         this.commentService = commentService;
     }
 
@@ -41,7 +45,7 @@ public class BlogController {
     public String blogMain(Model model){
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -54,7 +58,7 @@ public class BlogController {
     public String blogAdd(Model model){
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -68,7 +72,7 @@ public class BlogController {
                               Model model ){
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -77,7 +81,7 @@ public class BlogController {
             return "blog-add";
         }
         Post post = new Post(title, anons, full_text);
-        Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional<User> user = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user.isEmpty()) {
             model.addAttribute("errors", "Ошибка при создании поста: пользователь не найден");
             System.out.println("Error when trying to add post: user not found");
@@ -98,11 +102,11 @@ public class BlogController {
         model.addAttribute("post", post.get());
         post.get().setViews(post.get().getViews() + 1);
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                                     () -> model.addAttribute("curUser", null));
 
-        Optional <User> owner = postService.userById(post.get().getOwner().getId());
+        Optional <User> owner = userService.userById(post.get().getOwner().getId());
         owner.ifPresentOrElse((user) -> model.addAttribute("owner", user),
                 () -> model.addAttribute("owner", null));
 
@@ -117,7 +121,7 @@ public class BlogController {
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
         model.addAttribute("auth", isAuthenticated());
 
-        Optional <User> curUser = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
                 () -> model.addAttribute("curUser", null));
 
@@ -162,7 +166,7 @@ public class BlogController {
             return "redirect:/blog/" + postId;
         }
 
-        Optional<User> user = postService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional<User> user = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user.isEmpty()){
             System.out.println("Error when trying to add comment: user not found");
             return "redirect:/blog/" + postId;
