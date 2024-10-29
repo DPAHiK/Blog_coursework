@@ -28,10 +28,13 @@ public class BlogController {
     private final CommentService commentService;
 
 
+
+
     public BlogController(PostService postService, UserInfoService userService, CommentService commentService) {
         this.postService = postService;
         this.userService = userService;
         this.commentService = commentService;
+
     }
 
     private User getCurUser(){
@@ -44,6 +47,9 @@ public class BlogController {
     @GetMapping("/")
     public String blogMain(Model model){
         model.addAttribute("curUser", getCurUser());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getName());
 
         Iterable<Post> posts = postService.allPosts();
         model.addAttribute("posts", posts);
@@ -158,7 +164,7 @@ public class BlogController {
 
 
         Comment comment = new Comment(full_text);
-        comment.setAuthor(user.get().getName());
+        comment.setAuthor(user.get());
         comment.setPost(post.get());
         commentService.addComment(comment);
         return "redirect:/blog/" + postId;

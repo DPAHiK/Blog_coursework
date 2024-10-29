@@ -9,4 +9,9 @@ public interface CommentRepository extends CrudRepository<Comment, Long> {
 
     @Transactional
     void deleteByPostId(Long post_id);
+
+    Iterable<Comment> findByAuthorId(Long author_id);
+
+    @Transactional
+    void deleteByAuthorId(Long author_id);
 }

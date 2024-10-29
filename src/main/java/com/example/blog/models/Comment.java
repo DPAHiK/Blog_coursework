@@ -10,7 +10,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String full_text;
-    private String author; // потом надо ManyToOne с user сделать
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User author;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -49,11 +52,11 @@ public class Comment {
         this.post = post;
     }
 
-    public String getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 }

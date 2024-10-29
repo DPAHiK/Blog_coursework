@@ -23,6 +23,7 @@ public class MainController {
     @Autowired
     private final UserInfoService userService;
 
+
     public MainController(UserInfoService userService) {
         this.userService = userService;
     }
