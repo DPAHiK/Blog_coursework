@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,30 +27,24 @@ public class MainController {
         this.userService = userService;
     }
 
-    private boolean isAuthenticated() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return !auth.getName().equals("anonymousUser");
-    }
+    private User getCurUser(){
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(curUser.isPresent()) return curUser.get();
 
+        return new User("anon","","ROLE_ANONYMOUS");
+    }
 
     @GetMapping("/login")
     public String login(Model model) {
-        model.addAttribute("auth", isAuthenticated());
+        model.addAttribute("curUser", getCurUser());
 
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
 
         return "login";
     }
 
     @GetMapping("/registration")
     public String registration(Model model) {
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+        model.addAttribute("curUser", getCurUser());
 
         return "registration";
     }
@@ -59,11 +54,7 @@ public class MainController {
                                @RequestParam String password,
                                @RequestParam String passwordConfirm,
                                Model model) {
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+        model.addAttribute("curUser", getCurUser());
 
         if(name.isEmpty() || password.isEmpty() || name.equals("anonymousUser")) {
             model.addAttribute("errors", "Некорректные данные для регистрации. Пожалуйста, используйте другие");
@@ -91,11 +82,9 @@ public class MainController {
 
     @GetMapping("/profile/{id}")
     public String profile(Model model, @PathVariable(value = "id") long id){
-        model.addAttribute("auth", isAuthenticated());
+        model.addAttribute("curUser", getCurUser());
 
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+
 
         Optional<User> user = userService.userById(id);
         if(user.isPresent()){

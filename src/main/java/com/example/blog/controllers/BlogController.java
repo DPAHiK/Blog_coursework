@@ -34,20 +34,16 @@ public class BlogController {
         this.commentService = commentService;
     }
 
-    private boolean isAuthenticated() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return !auth.getName().equals("anonymousUser");
+    private User getCurUser(){
+        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(curUser.isPresent()) return curUser.get();
 
-
+        return new User("anon","","ROLE_ANONYMOUS");
     }
 
     @GetMapping("/")
     public String blogMain(Model model){
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+        model.addAttribute("curUser", getCurUser());
 
         Iterable<Post> posts = postService.allPosts();
         model.addAttribute("posts", posts);
@@ -56,11 +52,7 @@ public class BlogController {
 
     @GetMapping("/blog/add")
     public String blogAdd(Model model){
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+        model.addAttribute("curUser", getCurUser());
 
         return "blog-add";
     }
@@ -70,11 +62,7 @@ public class BlogController {
                               @RequestParam String anons,
                               @RequestParam String full_text,
                               Model model ){
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+        model.addAttribute("curUser", getCurUser());
 
         if(title.isEmpty() || anons.isEmpty() || full_text.isEmpty()) {
             model.addAttribute("errors", "Все поля должны быть заполнены");
@@ -95,15 +83,11 @@ public class BlogController {
 
     @GetMapping("/blog/{id}")
     public String blogDetails(Model model, @PathVariable(value = "id") long id){
-        model.addAttribute("auth", isAuthenticated());
+        model.addAttribute("curUser", getCurUser());
+
         Optional<Post> post = postService.postByID(id);
         if (post.isEmpty()) return "redirect:/";
-
         model.addAttribute("post", post.get());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                                    () -> model.addAttribute("curUser", null));
 
         Optional <User> owner = userService.userById(post.get().getOwner().getId());
         owner.ifPresentOrElse((user) -> model.addAttribute("owner", user),
@@ -118,11 +102,7 @@ public class BlogController {
 
     @GetMapping("/blog/{id}/edit")
     public String blogEdit(Model model, @PathVariable(value = "id") long id){
-        model.addAttribute("auth", isAuthenticated());
-
-        Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
-        curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),
-                () -> model.addAttribute("curUser", null));
+        model.addAttribute("curUser", getCurUser());
 
         Optional<Post> post = postService.postByID(id);
         if (post.isEmpty()) return "redirect:/";

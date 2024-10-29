@@ -24,7 +24,7 @@
     </div>
 
 
-    <form th:if="${auth == true}"  th:action="|/blog/${post.id}/addComment|" method="post">
+    <form th:if="${curUser.roles != 'ROLE_ANONYMOUS'}"  th:action="|/blog/${post.id}/addComment|" method="post">
         <textarea name="full_text" placeholder="Введите комментарий" class="form-control"></textarea><br>
         <button type="submit" th:href="|/blog/${post.id}/addComment|" class="btn btn-warning">Прокомментировать</button>
     </form>
