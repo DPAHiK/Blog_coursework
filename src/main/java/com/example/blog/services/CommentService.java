@@ -4,16 +4,17 @@ import com.example.blog.repo.CommentRepository;
 import org.springframework.stereotype.Service;
 import com.example.blog.models.Comment;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CommentService {       //Он вообще нужен?
-    private Iterable<Comment> comments;
-    private CommentRepository commentRepository;
+    private final List<Comment> comments;
+    private final CommentRepository commentRepository;
 
     public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
-        comments = commentRepository.findAll();
+        comments = (List<Comment>) commentRepository.findAll();
     }
 
     public Iterable<Comment> allComments() {
@@ -35,13 +36,13 @@ public class CommentService {       //Он вообще нужен?
     }
 
 
-    public void addComment(Comment post) {
-        commentRepository.save(post);
-        this.comments = commentRepository.findAll(); // мб получше что-то?
+    public void addComment(Comment comment) {
+        commentRepository.save(comment);
+        comments.add(comment);
     }
 
     public void deleteComment(Comment comment) {
         commentRepository.delete(comment);
-        this.comments = commentRepository.findAll();
+        comments.remove(comment);
     }
 }

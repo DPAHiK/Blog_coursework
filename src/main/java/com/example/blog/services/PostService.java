@@ -5,16 +5,18 @@ import com.example.blog.repo.PostRepository;
 import org.springframework.stereotype.Service;
 import com.example.blog.models.Post;
 
+import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class PostService { //Он вообще нужен?
-    private Iterable<Post> posts;
+    private final List<Post> posts;
     private final PostRepository postRepository;
 
     public PostService( PostRepository postRepository) {
         this.postRepository = postRepository;
-        posts = postRepository.findAll();
+        posts = (List<Post>) postRepository.findAll();
     }
 
     public Iterable<Post> allPosts() {
@@ -34,11 +36,11 @@ public class PostService { //Он вообще нужен?
 
     public void addPost(Post post) {
         postRepository.save(post);
-        this.posts = postRepository.findAll(); // мб получше что-то?
+        posts.add(post);
     }
 
     public void deletePost(Post post) {
         postRepository.delete(post);
-        this.posts = postRepository.findAll();
+        posts.remove(post);
     }
 }

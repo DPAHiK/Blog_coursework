@@ -12,9 +12,6 @@ public class Post {
     private String title;
     private String anons;
     private String full_text;
-    private int views;
-
-
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -60,14 +57,6 @@ public class Post {
 
     public void setFull_text(String full_text) {
         this.full_text = full_text;
-    }
-
-    public int getViews() {
-        return views;
-    }
-
-    public void setViews(int views) {
-        this.views = views;
     }
 
     public User getOwner() {

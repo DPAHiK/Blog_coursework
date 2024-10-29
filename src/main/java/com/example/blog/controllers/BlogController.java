@@ -100,7 +100,6 @@ public class BlogController {
         if (post.isEmpty()) return "redirect:/";
 
         model.addAttribute("post", post.get());
-        post.get().setViews(post.get().getViews() + 1);
 
         Optional <User> curUser = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         curUser.ifPresentOrElse((user) -> model.addAttribute("curUser", user),

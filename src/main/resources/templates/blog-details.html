@@ -16,7 +16,6 @@
         <a th:if="${owner != null}" th:text="|Автор: ${owner.name}|" th:href="|/profile/${owner.id}|"></a>
         <p th:unless="${owner != null}">???</p>
         <p th:text="|${post.full_text}|"></p>
-        <p th:text="|${post.views} просмотров|"></p>
         <a th:if="${owner.id == curUser.id}" th:href="|/blog/${post.id}/edit|" class="btn btn-warning">Редактировать</a><br><br>
         <form th:if="${owner.id == curUser.id}" th:action="|/blog/${post.id}/remove|" method="post">
             <button type="submit" th:href="|/blog/${post.id}/remove|" class="btn btn-warning">Удалить</button>
