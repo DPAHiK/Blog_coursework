@@ -5,6 +5,7 @@ import com.example.blog.repo.PostRepository;
 import org.springframework.stereotype.Service;
 import com.example.blog.models.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,28 @@ public class PostService { //Он вообще нужен?
         return post;
     }
 
+    public List<Post> postByOwnerId(long ownerId){
+        List<Post> foundPosts = new ArrayList<Post>();
+        for (Post post1 : posts) {
+            if (post1.getOwner().getId() == ownerId) {
+                foundPosts.add(post1);
+            }
+        }
+
+        return foundPosts;
+    }
+
+    public List<Post> postByOwnerId(long ownerId, int from, int count){
+        List<Post> foundPosts = new ArrayList<Post>();
+        int size = Math.min(from + count, this.posts.size());
+        for (int i = from; i < size; i++) {
+            if (this.posts.get(i).getOwner().getId() == ownerId) {
+                foundPosts.add(posts.get(i));
+            }
+        }
+
+        return foundPosts;
+    }
 
     public void addPost(Post post) {
         postRepository.save(post);

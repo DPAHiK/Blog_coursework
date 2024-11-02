@@ -1,20 +1,18 @@
 package com.example.blog.controllers;
 
+import com.example.blog.models.Post;
 import com.example.blog.models.User;
 import com.example.blog.models.UserInfo;
 import com.example.blog.services.PostService;
-import com.example.blog.services.CommentService;
 import com.example.blog.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -22,10 +20,13 @@ public class MainController {
 
     @Autowired
     private final UserInfoService userService;
+    @Autowired
+    private final PostService postService;
 
 
-    public MainController(UserInfoService userService) {
+    public MainController(UserInfoService userService, PostService postService) {
         this.userService = userService;
+        this.postService = postService;
     }
 
     private User getCurUser(){
@@ -106,6 +107,9 @@ public class MainController {
             System.out.println("Error with opening profile: userInfo not found");
             return "redirect:/";
         }
+
+        List<Post> posts = postService.postByOwnerId(user.get().getId(), 0, 5);
+        model.addAttribute("posts", posts);
 
         return "profile";
     }

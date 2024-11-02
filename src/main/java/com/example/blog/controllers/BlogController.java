@@ -49,8 +49,8 @@ public class BlogController {
     public String blogMain(Model model){
         model.addAttribute("curUser", getCurUser());
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth.getName());
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //System.out.println(auth.getName());
 
         Iterable<Post> posts = postService.allPosts();
         model.addAttribute("posts", posts);
