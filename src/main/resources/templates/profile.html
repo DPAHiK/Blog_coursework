@@ -10,7 +10,7 @@
 <header th:insert="~{blocks/header.html::header}"></header>
 
 
-<div class="container">
+<div class="container min-vh-100">
   <h1 th:text="|${user.name}|"></h1>
   <div th:text="|Дата регистрации: ${userInfo.regDate}|" />
   <div th:text="|Посты: ${userInfo.postCount}|" />

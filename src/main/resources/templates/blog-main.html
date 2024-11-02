@@ -10,14 +10,14 @@
 <header th:insert="~{blocks/header.html::header}"></header>
 
 
-<div class="container">
+<div class="container min-vh-100">
     <h1>Блог сайта</h1>
     <div th:each="el : ${posts}" class="alert alert-info mt-2">
         <h3 th:text="|${el.title}|"></h3>
         <p th:text="|${el.anons}|"></p>
         <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
     </div>
-</div>>
+</div>
 
 <footer th:insert="~{blocks/footer.html::footer}"></footer>
 
