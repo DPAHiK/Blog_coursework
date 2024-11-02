@@ -10,12 +10,27 @@
 <header th:insert="~{blocks/header.html::header}"></header>
 
 
-<div class="container">
+<div class="container min-vh-100">
   <h1 th:text="|${user.name}|"></h1>
   <div th:text="|Дата регистрации: ${userInfo.regDate}|" />
   <div th:text="|Посты: ${userInfo.postCount}|" />
-  <div th:text="|Комментарии: ${userInfo.commentCount}|" />
-</div>>
+  <div th:text="|Комментарии: ${userInfo.commentCount}|" /><br><br>
+
+  <div th:if="${!posts.isEmpty()}">
+    <h3 class="mb-2">Недавние посты</h3>
+
+    <div th:each="el : ${posts}" class="alert alert-info mt-2">
+      <h3 th:text="|${el.title}|"></h3>
+      <p th:text="|${el.anons}|"></p>
+      <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
+    </div>
+  </div>
+  <div th:unless="${!posts.isEmpty()}">
+    <h2 class="mb-2 center-block">Недавних постов нет</h2>
+  </div>
+
+</div>
+
 
 <footer th:insert="~{blocks/footer.html::footer}"></footer>
 
