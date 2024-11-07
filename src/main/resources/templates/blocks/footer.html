@@ -5,6 +5,6 @@
         </p>
         <p class="mb-1"><a href="/">На главную</a></p>
         <p th:if='${curUser.roles == "ROLE_ANONYMOUS"}' class="mb-0">Недавно на сайте?<a href="/registration">Зарегистрироваться</a></p>
-        <p th:if='${curUser.roles != "ROLE_ANONYMOUS"}' class="mb-0">Уже насиделись?<a href="/logout">Выйти</a></p>
+        <p th:unless='${curUser.roles == "ROLE_ANONYMOUS"}' class="mb-0">Уже насиделись?<a href="/logout">Выйти</a></p>
     </div>
 </div>
