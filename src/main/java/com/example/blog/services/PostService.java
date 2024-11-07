@@ -20,8 +20,16 @@ public class PostService { //Он вообще нужен?
         posts = (List<Post>) postRepository.findAll();
     }
 
-    public Iterable<Post> allPosts() {
+    public List<Post> allPosts() {
         return posts;
+    }
+
+    public List<Post> somePosts(int from, int count){
+        List<Post> partPosts = new ArrayList<>();
+        int size = Math.min(posts.size(), from + count);
+        for (int i = from; i < size; i++) partPosts.add(posts.get(i));
+
+        return partPosts;
     }
 
     public Optional<Post> postByID(long id) {
@@ -45,10 +53,9 @@ public class PostService { //Он вообще нужен?
         return foundPosts;
     }
 
-    public List<Post> postByOwnerId(long ownerId, int from, int count){
+    public List<Post> postByOwnerId(long ownerId, int count){
         List<Post> foundPosts = new ArrayList<Post>();
-        int size = Math.min(from + count, this.posts.size());
-        for (int i = from; i < size; i++) {
+        for (int i = 0; i < this.posts.size() && foundPosts.size() < count; i++) {
             if (this.posts.get(i).getOwner().getId() == ownerId) {
                 foundPosts.add(posts.get(i));
             }

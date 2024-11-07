@@ -108,7 +108,7 @@ public class MainController {
             return "redirect:/";
         }
 
-        List<Post> posts = postService.postByOwnerId(user.get().getId(), 0, 5);
+        List<Post> posts = postService.postByOwnerId(user.get().getId(), 5);
         model.addAttribute("posts", posts);
 
         return "profile";

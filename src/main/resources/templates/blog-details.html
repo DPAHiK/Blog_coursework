@@ -24,30 +24,36 @@
     </div>
 
 
-    <form  th:action="|/blog/${post.id}/addComment|" method="post">
+    <form th:if='${curUser.roles != "ROLE_ANONYMOUS"}' th:action="|/blog/${post.id}/addComment|" method="post">
         <textarea name="full_text" placeholder="Введите комментарий" class="form-control"></textarea><br>
         <button type="submit" th:href="|/blog/${post.id}/addComment|" class="btn btn-warning mb-2">Прокомментировать</button>
     </form>
 
+    <div>
+        <h3>Комментарии</h3>
+        <div th:if="${!comments.isEmpty()}" th:each="comm : ${comments}" class = "alert alert-warning mt-2">
+            <a th:href="|/profile/${comm.author.id}|"><h3 th:text="|${comm.getAuthor().getName()}|"></h3></a>
+            <p th:text="|${comm.full_text}|" th:id="|fullTextLabel${comm.id}|"></p>
 
-    <div th:each="comm : ${comments}" class = "alert alert-warning mt-2">
-        <a th:href="|/profile/${comm.author.id}|"><h3 th:text="|${comm.getAuthor().getName()}|"></h3></a>
-        <p th:text="|${comm.full_text}|" th:id="|fullTextLabel${comm.id}|"></p>
 
+            <button th:if="${curUser.id == comm.author.id}"  type="button" class="btn btn-warning" th:id="|editBut${comm.id}|" th:onclick="|editComment(${comm.id})|">Редактировать</button>
 
-        <button th:if="${curUser.id == comm.author.id}"  type="button" class="btn btn-warning" th:id="|editBut${comm.id}|" th:onclick="|editComment(${comm.id})|">Редактировать</button>
+            <form th:if="${curUser.id == comm.author.id}" th:action="|/blog/${post.id}/editComment/${comm.id}|"  method="post" hidden="hidden" th:id="|confirmForm${comm.id}|" >
 
-        <form th:if="${curUser.id == comm.author.id}" th:action="|/blog/${post.id}/editComment/${comm.id}|"  method="post" hidden="hidden" th:id="|confirmForm${comm.id}|" >
+                <textarea th:text="|${comm.full_text}|" class="form-control mb-2" name="full_text" th:id="|fullTextArea${comm.id}|" ></textarea>
+                <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning"  th:onclick="|editCommentConfirm(${comm.id})|" style="display: inline-block" >Готово</button>
+                <button type="button" class="btn btn-warning" th:onclick="|editCommentConfirm(${comm.id})|" style="display: inline-block" >Отмена</button>
+            </form>
+            <form th:if="${curUser.id == comm.author.id}" th:action="|/blog/${post.id}/removeComment/${comm.id}|" method="post" class="mt-2">
+                <button type="submit" th:href="|/blog/${post.id}/removeComment/${comm.id}|" class="btn btn-warning">Удалить</button>
+            </form>
 
-            <textarea th:text="|${comm.full_text}|" class="form-control mb-2" name="full_text" th:id="|fullTextArea${comm.id}|" ></textarea>
-            <button type="submit" th:href="|/blog/${post.id}/editComment/${comm.id}|" class="btn btn-warning"  th:onclick="|editCommentConfirm(${comm.id})|" style="display: inline-block" >Готово</button>
-            <button type="button" class="btn btn-warning" th:onclick="|editCommentConfirm(${comm.id})|" style="display: inline-block" >Отмена</button>
-        </form>
-        <form th:if="${curUser.id == comm.author.id}" th:action="|/blog/${post.id}/removeComment/${comm.id}|" method="post" class="mt-2">
-            <button type="submit" th:href="|/blog/${post.id}/removeComment/${comm.id}|" class="btn btn-warning">Удалить</button>
-        </form>
-
+        </div>
+        <div th:unless="${!comments.isEmpty()}">
+            <h4>Комментариев нет</h4>
+        </div>
     </div>
+
 </div>>
 
 

@@ -18,6 +18,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import com.example.blog.services.MyUserDetailsService;
 
+import java.util.regex.Pattern;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -30,9 +32,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        Pattern pat = Pattern.compile("/\\d*");
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/","/blog", "/login", "/registration", "/about", "error").permitAll()
-                        .requestMatchers("/blog/add", "/blog/**", "/profile/**").authenticated())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/*",  "/blog/*", "/login", "/registration",  "/error").permitAll()
+                        .requestMatchers("/add/blog","/blog/**", "/profile/**").authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll())

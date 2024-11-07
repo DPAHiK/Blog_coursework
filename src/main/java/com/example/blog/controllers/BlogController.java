@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,7 +29,7 @@ public class BlogController {
     @Autowired
     private final CommentService commentService;
 
-
+    private final int pageSize = 5;
 
 
     public BlogController(PostService postService, UserInfoService userService, CommentService commentService) {
@@ -48,23 +49,38 @@ public class BlogController {
     @GetMapping("/")
     public String blogMain(Model model){
         model.addAttribute("curUser", getCurUser());
-
+        model.addAttribute("curPage", 0);
         //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //System.out.println(auth.getName());
 
-        Iterable<Post> posts = postService.allPosts();
+        Iterable<Post> posts = postService.somePosts(0, pageSize);
         model.addAttribute("posts", posts);
         return "blog-main";
     }
 
-    @GetMapping("/blog/add")
+    @GetMapping("/{page}")
+    public String blogMainNextPages(@PathVariable(value = "page") int page, Model model){
+        model.addAttribute("curUser", getCurUser());
+        model.addAttribute("curPage", page);
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //System.out.println(auth.getName());
+
+        List<Post> posts = postService.somePosts(page * pageSize, pageSize);
+
+        if(posts.isEmpty()) return "redirect:/";
+
+        model.addAttribute("posts", posts);
+        return "blog-main";
+    }
+
+    @GetMapping("/add/blog")
     public String blogAdd(Model model){
         model.addAttribute("curUser", getCurUser());
 
         return "blog-add";
     }
 
-    @PostMapping("/blog/add")
+    @PostMapping("/add/blog")
     public String blogPostAdd(@RequestParam String title,
                               @RequestParam String anons,
                               @RequestParam String full_text,

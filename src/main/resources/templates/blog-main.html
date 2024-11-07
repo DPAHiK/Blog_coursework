@@ -11,11 +11,18 @@
 
 
 <div class="container min-vh-100">
-    <h1>Блог сайта</h1>
+    <h1>Лента</h1>
     <div th:each="el : ${posts}" class="alert alert-info mt-2">
         <h3 th:text="|${el.title}|"></h3>
         <p th:text="|${el.anons}|"></p>
         <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
+    </div>
+    <div th:if="${curPage != 0}" class="row">
+        <a th:href="|/${curPage - 1}|" class="btn btn-warning col-md-5">Назад</a>
+        <a th:href="|/${curPage + 1}|" class="btn btn-warning col-md-5 offset-md-2">Далее</a>
+    </div>
+    <div th:unless="${curPage != 0}" class="row">
+        <a th:href="|/${curPage + 1}|" class="btn btn-warning col-md-5 offset-md-7">Далее</a>
     </div>
 </div>
 
