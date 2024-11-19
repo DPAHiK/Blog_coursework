@@ -50,6 +50,7 @@ public class BlogController {
     public String blogMain(Model model){
         model.addAttribute("curUser", getCurUser());
         model.addAttribute("curPage", 0);
+        model.addAttribute("haveNext", pageSize < postService.postsCount());
         //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //System.out.println(auth.getName());
 
@@ -62,6 +63,7 @@ public class BlogController {
     public String blogMainNextPages(@PathVariable(value = "page") int page, Model model){
         model.addAttribute("curUser", getCurUser());
         model.addAttribute("curPage", page);
+        model.addAttribute("haveNext", (page + 1) * pageSize  < postService.postsCount());
         //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //System.out.println(auth.getName());
 
@@ -71,6 +73,43 @@ public class BlogController {
 
         model.addAttribute("posts", posts);
         return "blog-main";
+    }
+
+    @GetMapping("/search")
+    public String blogSearch(@BindParam String postName, Model model){
+        if(postName.isBlank()) return "redirect:/";
+
+        model.addAttribute("curUser", getCurUser());
+        model.addAttribute("curPage", 0);
+        model.addAttribute("postName", postName);
+        model.addAttribute("haveNext", pageSize < postService.postsCount(postName));
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //System.out.println(auth.getName());
+
+        Iterable<Post> posts = postService.somePosts(0, pageSize, postName);
+        model.addAttribute("posts", posts);
+        return "blog-search";
+    }
+
+    @GetMapping("/search/{page}")
+    public String blogSearchNextPages(@BindParam String postName, @PathVariable(value = "page") int page, Model model){
+        System.out.println(postName);
+
+        if(postName.isBlank()) return "redirect:/";
+
+        model.addAttribute("curUser", getCurUser());
+        model.addAttribute("curPage", page);
+        model.addAttribute("postName", postName);
+        model.addAttribute("haveNext", (page + 1) * pageSize  < postService.postsCount(postName));
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //System.out.println(auth.getName());
+
+        List<Post> posts = postService.somePosts(page * pageSize, pageSize, postName);
+
+        if(posts.isEmpty()) return "redirect:/";
+
+        model.addAttribute("posts", posts);
+        return "blog-search";
     }
 
     @GetMapping("/add/blog")

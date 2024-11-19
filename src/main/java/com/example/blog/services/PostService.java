@@ -32,6 +32,37 @@ public class PostService { //Он вообще нужен?
         return partPosts;
     }
 
+    public List<Post> somePosts(int from, int count, String filterName){
+        filterName = filterName.strip();
+
+        List<Post> partPosts = new ArrayList<>();
+        int i = 0;
+        int j = 0;
+        for (; j < posts.size() && i < from; j++)
+            if(posts.get(j).getTitle().contains(filterName) ||
+                    posts.get(j).getAnons().contains(filterName)) i++;
+
+
+        for (; j < posts.size() && partPosts.size() < count; j++){
+            if(posts.get(j).getTitle().contains(filterName) ||
+                    posts.get(j).getAnons().contains(filterName)) partPosts.add(posts.get(j));
+        }
+
+        return partPosts;
+    }
+
+    public int postsCount(){
+        return posts.size();
+    }
+
+    public int postsCount(String filter){
+        List<Post> partPosts = new ArrayList<>();
+        for (int i = 0; i < posts.size(); i++)
+            if(posts.get(i).getTitle().contains(filter) ||
+                    posts.get(i).getAnons().contains(filter)) partPosts.add(posts.get(i));
+        return partPosts.size();
+    }
+
     public Optional<Post> postByID(long id) {
         Optional<Post> post = Optional.empty();
         for (Post post1 : posts) {

@@ -12,18 +12,31 @@
 
 <div class="container min-vh-100">
     <h1>Лента</h1>
-    <div th:each="el : ${posts}" class="alert alert-info mt-2">
-        <h3 th:text="|${el.title}|"></h3>
-        <p th:text="|${el.anons}|"></p>
-        <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
+    <form action="/search" method="get" class="row justify-content-md-center">
+        <div class="col-md">
+            <input type="text" name="postName" placeholder="Поиск" class="form-control">
+        </div>
+        <div class="col-md-auto">
+            <button type="submit" class="btn btn-warning">Поиск</button>
+        </div>
+
+    </form>
+    <div th:if="${!posts.isEmpty()}">
+        <div th:each="el : ${posts}" class="alert alert-info mt-2">
+            <h3 th:text="|${el.title}|"></h3>
+            <p th:text="|${el.anons}|"></p>
+            <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
+        </div>
+        <div class="row">
+            <a th:if="${curPage != 0}" th:href="|/${curPage - 1}|" class="btn btn-warning col-md-5">Назад</a>
+            <a th:unless="${curPage != 0}" class="col-md-5"></a>
+            <a th:if="${haveNext}" th:href="|/${curPage + 1}|" class="btn btn-warning col-md-5 offset-md-2">Далее</a>
+        </div>
     </div>
-    <div th:if="${curPage != 0}" class="row">
-        <a th:href="|/${curPage - 1}|" class="btn btn-warning col-md-5">Назад</a>
-        <a th:href="|/${curPage + 1}|" class="btn btn-warning col-md-5 offset-md-2">Далее</a>
+    <div th:unless="${!posts.isEmpty()}">
+        <h2 class="mb-2 center-block">Постов не найдено</h2>
     </div>
-    <div th:unless="${curPage != 0}" class="row">
-        <a th:href="|/${curPage + 1}|" class="btn btn-warning col-md-5 offset-md-7">Далее</a>
-    </div>
+
 </div>
 
 <footer th:insert="~{blocks/footer.html::footer}"></footer>
