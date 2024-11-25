@@ -17,16 +17,17 @@
   <div th:text="|Комментарии: ${userInfo.commentCount}|" /><br><br>
 
   <div th:if="${!posts.isEmpty()}">
-    <h3 class="mb-2">Недавние посты</h3>
+    <h3 class="mb-2">Последние посты</h3>
 
     <div th:each="el : ${posts}" class="alert alert-info mt-2">
       <h3 th:text="|${el.title}|"></h3>
       <p th:text="|${el.anons}|"></p>
+      <p th:text="|${el.create_at}|"></p>
       <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
     </div>
   </div>
   <div th:unless="${!posts.isEmpty()}">
-    <h2 class="mb-2 center-block">Недавних постов нет</h2>
+    <h2 class="mb-2 center-block">Постов нет</h2>
   </div>
 
 </div>
