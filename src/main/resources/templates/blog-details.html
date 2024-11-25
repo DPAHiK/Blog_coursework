@@ -15,6 +15,7 @@
         <h3 th:text="|${post.title}|"></h3>
         <a th:text="|Автор: ${owner.name}|" th:href="|/profile/${owner.id}|"></a>
         <p th:text="|${post.full_text}|"></p>
+        <p th:text="|${post.create_at}|"></p>
         <a th:if="${owner.id == curUser.id}" th:href="|/blog/${post.id}/edit|" class="btn btn-warning mb-2">Редактировать</a><br>
         <form th:if="${owner.id == curUser.id}" th:action="|/blog/${post.id}/remove|" method="post">
             <button type="submit" th:href="|/blog/${post.id}/remove|" class="btn btn-warning">Удалить</button>

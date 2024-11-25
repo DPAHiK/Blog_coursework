@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -130,7 +132,8 @@ public class BlogController {
             model.addAttribute("errors", "Все поля должны быть заполнены");
             return "blog-add";
         }
-        Post post = new Post(title, anons, full_text);
+
+        Post post = new Post(title, anons, full_text, LocalDate.now().toString());
         Optional<User> user = userService.userByName(SecurityContextHolder.getContext().getAuthentication().getName());
         if(user.isEmpty()) {
             model.addAttribute("errors", "Ошибка при создании поста: пользователь не найден");

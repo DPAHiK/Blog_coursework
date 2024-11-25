@@ -13,6 +13,10 @@ public class Post {
     private String anons;
     private String full_text;
 
+
+
+    private String create_at;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -21,10 +25,11 @@ public class Post {
     public Post() {
     }
 
-    public Post(String title, String anons, String full_text) {
+    public Post(String title, String anons, String full_text, String create_at) {
         this.title = title;
         this.anons = anons;
         this.full_text = full_text;
+        this.create_at = create_at;
     }
 
     public Long getId() {
@@ -65,5 +70,13 @@ public class Post {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public String getCreate_at() {
+        return create_at;
+    }
+
+    public void setCreate_at(String create_at) {
+        this.create_at = create_at;
     }
 }
