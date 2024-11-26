@@ -8,16 +8,12 @@ import com.example.blog.services.PostService;
 import com.example.blog.services.CommentService;
 import com.example.blog.services.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -201,10 +197,12 @@ public class BlogController {
                                  Model model ){
         Post post = postService.postByID(id).orElseThrow();
         User owner = userService.userById(post.getOwner().getId()).orElseThrow();
+        int commentsCount = commentService.commentsByPost(id).size();
         postService.deletePost(post);
 
         Optional<UserInfo> userInfo = userService.infoByUserID(owner.getId());
         userInfo.ifPresent(info -> {info.setPostCount(info.getPostCount() - 1);
+                                    info.setCommentCount(info.getCommentCount() - commentsCount);
             userService.addUserInfo(info);});
 
         return "redirect:/";

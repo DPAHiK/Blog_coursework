@@ -12,7 +12,7 @@
 <input type="text" hidden="hidden" name="postName" th:value="|${postName}|" form="searchNext">
 <input type="text" hidden="hidden" name="postName" th:value="|${postName}|" form="searchPrev">
 <div class="container min-vh-100">
-  <h1>Лента</h1>
+  <h1 th:text="|Поиск по: ${postName}|"></h1>
   <form action="/search" method="get" class="row justify-content-md-center">
     <div class="col-md">
       <input type="text" name="postName" placeholder="Поиск" class="form-control">
@@ -26,6 +26,7 @@
     <div th:each="el : ${posts}" class="alert alert-info mt-2">
       <h3 th:text="|${el.title}|"></h3>
       <p th:text="|${el.anons}|"></p>
+      <p th:text="|${el.create_at}|"></p>
       <a th:href="|/blog/${el.id}|" class="btn btn-warning">Детальнее</a>
     </div>
     <div class="row">

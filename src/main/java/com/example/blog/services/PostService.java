@@ -3,6 +3,9 @@ package com.example.blog.services;
 
 import com.example.blog.repo.PostRepository;
 import org.springframework.stereotype.Service;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import com.example.blog.models.Post;
 
 import java.util.ArrayList;
@@ -11,83 +14,126 @@ import java.util.Optional;
 
 
 @Service
-public class PostService { //Он вообще нужен?
-    private final List<Post> posts;
+public class PostService { 
     private final PostRepository postRepository;
+    private final SessionFactory sessionFactory;
 
-    public PostService( PostRepository postRepository) {
+    public PostService( PostRepository postRepository, SessionFactory sessionFactory) {
         this.postRepository = postRepository;
-        posts = (List<Post>) postRepository.findAll();
+        this.sessionFactory = sessionFactory;
     }
 
     public List<Post> allPosts() {
-        return posts;
+        return (List<Post>) postRepository.findAll();
     }
 
     public List<Post> somePosts(int from, int count){
-        List<Post> partPosts = new ArrayList<>();
-        int size = Math.min(posts.size(), from + count);
-        for (int i = from; i < size; i++) partPosts.add(posts.get(i));
+        List<Post> posts = null;
+        Session session = null;
 
-        return partPosts;
+        try {
+            session = sessionFactory.openSession();
+
+            Query<Post> query = session.createQuery("FROM Post ORDER BY create_at DESC", Post.class);
+            query.setFirstResult(from);
+            query.setMaxResults(count);
+
+            posts = query.list();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            if(session != null) session.close();
+        }
+
+
+        return posts;
     }
 
     public List<Post> somePosts(int from, int count, String filterName){
         filterName = filterName.strip();
 
-        List<Post> partPosts = new ArrayList<>();
-        int i = 0;
-        int j = 0;
-        for (; j < posts.size() && i < from; j++)
-            if(posts.get(j).getTitle().contains(filterName) ||
-                    posts.get(j).getAnons().contains(filterName)) i++;
+        List<Post> posts = null;
+        Session session = null;
 
+        try {
+            session = sessionFactory.openSession();
 
-        for (; j < posts.size() && partPosts.size() < count; j++){
-            if(posts.get(j).getTitle().contains(filterName) ||
-                    posts.get(j).getAnons().contains(filterName)) partPosts.add(posts.get(j));
+            Query<Post> query = session.createQuery("FROM Post p WHERE p.title LIKE :filter OR p.anons LIKE :filter ORDER BY create_at DESC", Post.class);
+            query.setParameter("filter",  "%" + filterName + "%");
+            query.setFirstResult(from);
+            query.setMaxResults(count);
+
+            posts = query.list();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            if(session != null) session.close();
         }
 
-        return partPosts;
+
+        return posts;
     }
 
-    public int postsCount(){
-        return posts.size();
+    public Long postsCount(){
+        Long size = 0L;
+        Session session = null;
+
+        try {
+            session = sessionFactory.openSession();
+
+            Query<Long> query = session.createQuery("SELECT COUNT(p) FROM Post p", Long.class);
+
+            size = query.uniqueResult();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            if(session != null) session.close();
+        }
+
+        return size;
     }
 
-    public int postsCount(String filter){
-        List<Post> partPosts = new ArrayList<>();
-        for (int i = 0; i < posts.size(); i++)
-            if(posts.get(i).getTitle().contains(filter) ||
-                    posts.get(i).getAnons().contains(filter)) partPosts.add(posts.get(i));
-        return partPosts.size();
+    public Long postsCount(String filter){
+        Long size = 0L;
+        Session session = null;
+
+        try {
+            session = sessionFactory.openSession();
+
+            Query<Long> query = session.createQuery("SELECT COUNT(p) FROM Post p WHERE p.title LIKE :filter OR p.anons LIKE :filter", Long.class);
+            query.setParameter("filter", "%" + filter + "%");
+
+            size = query.uniqueResult();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            if(session != null) session.close();
+        }
+
+        return size;
     }
 
     public Optional<Post> postByID(long id) {
-        Optional<Post> post = Optional.empty();
-        for (Post post1 : posts) {
-            if (post1.getId() == id) {
-                post = Optional.of(post1);
-            }
-        }
-        return post;
+        return postRepository.findById(id);
     }
 
     public List<Post> postByOwnerId(long ownerId){
-        List<Post> foundPosts = new ArrayList<Post>();
-        for (Post post1 : posts) {
-            if (post1.getOwner().getId() == ownerId) {
-                foundPosts.add(post1);
-            }
-        }
-
-        return foundPosts;
+        return (List<Post>) postRepository.findByOwnerId(ownerId);
     }
 
     public List<Post> postByOwnerId(long ownerId, int count){
+        List<Post> posts = (List<Post>) postRepository.findByOwnerId(ownerId);
         List<Post> foundPosts = new ArrayList<Post>();
-        for (int i = 0; i < this.posts.size() && foundPosts.size() < count; i++) {
-            if (this.posts.get(i).getOwner().getId() == ownerId) {
+        for (int i = 0; i < posts.size() && foundPosts.size() < count; i++) {
+            if (posts.get(i).getOwner().getId() == ownerId) {
                 foundPosts.add(posts.get(i));
             }
         }
@@ -97,11 +143,9 @@ public class PostService { //Он вообще нужен?
 
     public void addPost(Post post) {
         postRepository.save(post);
-        posts.add(post);
     }
 
     public void deletePost(Post post) {
         postRepository.delete(post);
-        posts.remove(post);
     }
 }

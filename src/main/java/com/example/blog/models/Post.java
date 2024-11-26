@@ -12,9 +12,6 @@ public class Post {
     private String title;
     private String anons;
     private String full_text;
-
-
-
     private String create_at;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

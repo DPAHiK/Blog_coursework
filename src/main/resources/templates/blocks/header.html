@@ -9,7 +9,7 @@
     <nav th:if='${curUser.roles != "ROLE_ANONYMOUS"}' class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" th:href="|/profile/${curUser.id}|">Мой профиль</a>
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/">Главная</a>
-      <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/add/blog">Добавить блог</a>
+      <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/add/blog">Добавить пост</a>
       <a  class="me-3 py-2 link-body-emphasis text-decoration-none" href="/logout">Выйти</a>
     </nav>
 
@@ -17,7 +17,7 @@
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/login">Войти</a>
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/registration">Регистрация</a>
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/">Главная</a>
-      <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/add/blog">Добавить блог</a>
+      <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="/add/blog">Добавить пост</a>
     </nav>
   </div>
   <div th:if="|${errors}|" class="container">
